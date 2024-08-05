@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sellon.hr.mapper.OperationCostMapper">
+    <resultMap id="CodeMap" type="code">
+        <result column="type" property="type"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="seq" property="seq"/>
+    </resultMap>
+
+    <resultMap id="OperationCostMap" type="operationCost">
+        <id column="id" property="id"/>
+        <result column="service_name" property="serviceName"/>
+        <result column="service_kind" property="serviceKind"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="expiry_date" property="expiryDate"/>
+        <result column="due_date" property="dueDate"/>
+        <result column="payment_interval" property="paymentInterval"/>
+        <result column="renew_method" property="renewMethod"/>
+        <result column="amount" property="amount"/>
+        <result column="payment_unit" property="paymentUnit"/>
+        <result column="payment_card" property="paymentCard"/>
+        <result column="email" property="email"/>
+        <result column="remark" property="remark"/>
+        <result column="active_yn" property="activeYn"/>
+        <result column="createdAt" property="createdAt"/>
+        <result column="createdBy" property="createdBy"/>
+        <result column="updatedAt" property="updatedAt"/>
+        <result column="updatedBy" property="updatedBy"/>
+    </resultMap>
+
+    <!--    //운영비용 관련 공통코드 조회-->
+    <select id="getCostCodes" resultMap="CodeMap" resultType="code">
+        SELECT type,code, name, seq
+        FROM c_code
+        WHERE use_yn='Y'
+        AND type in('SERVICE KIND','PAYMENT INTERVAL','RENEW METHOD', 'PAYMENT UNIT')
+        ORDER BY type,seq
+    </select>
+
+    <!--    //운영비용 전체 조회-->
+    <select id="getAllOperationCost" resultMap="OperationCostMap" resultType="operationCost">
+        SELECT id,service_name,service_kind,payment_date,expiry_date, if(payment_date >= curdate(), payment_date, expiry_date) due_date,
+        payment_interval,renew_method,amount, payment_unit,payment_card,email,remark,active_yn,
+        createdAt,createdBy,updatedAt,updatedBy
+        FROM operation_cost
+        WHERE active_yn='Y'
+        ORDER BY due_date asc,service_kind
+    </select>
+
+<!--    &lt;!&ndash;    //운영비용 전체 조회&ndash;&gt;-->
+<!--    <select id="getAllOperationCost" resultMap="OperationCostMap" resultType="operationCost">-->
+<!--        SELECT id,service_name,service_kind,payment_date,expiry_date,payment_interval,renew_method,amount,-->
+<!--        payment_unit,payment_card,email,remark,active_yn,-->
+<!--        createdAt,createdBy,updatedAt,updatedBy-->
+<!--        FROM operation_cost-->
+<!--        WHERE active_yn='Y'-->
+<!--        ORDER BY expiry_date asc,service_kind-->
+<!--    </select>-->
+
+    <!--    //운영비용 건별 조회-->
+    <select id="getOperationCostById" resultMap="OperationCostMap" resultType="operationCost">
+        SELECT id,service_name,service_kind,payment_date,expiry_date,payment_interval,renew_method,amount,
+        payment_unit,payment_card,email,remark,active_yn,
+        createdAt,createdBy,updatedAt,updatedBy
+        FROM operation_cost
+        WHERE id=#{id}
+        AND active_yn='Y'
+    </select>
+
+    <!--    //운영비용 저장-->
+    <insert id="saveOperationCost" parameterType="operationCost">
+        INSERT INTO
+        operation_cost(id,service_name,service_kind,payment_date,expiry_date,payment_interval,renew_method,amount,
+        payment_unit,payment_card,email,remark,active_yn,
+        createdAt,createdBy,updatedAt,updatedBy) VALUES(#{id}, #{serviceName}, #{serviceKind},
+        #{paymentDate},#{expiryDate},#{paymentInterval},#{renewMethod},#{amount},#{paymentUnit},#{paymentCard},
+        #{email},#{remark},#{activeYn},#{createdAt},#{createdBy},#{updatedAt},#{updatedBy})
+    </insert>
+
+    <!--    //운영비용 수정-->
+    <update id="updateOperationCost" parameterType="operationCost">
+        UPDATE operation_cost
+        SET service_name=#{opCost.serviceName},service_kind=#{opCost.serviceKind},payment_date=#{opCost.paymentDate},
+            expiry_date=#{opCost.expiryDate},payment_interval=#{opCost.paymentInterval},renew_method=#{opCost.renewMethod},
+            amount=#{opCost.amount},payment_unit=#{opCost.paymentUnit},payment_card=#{opCost.paymentCard},
+            email=#{opCost.email},remark=#{opCost.remark},active_yn=#{opCost.activeYn},createdAt=#{opCost.createdAt},
+            createdBy=#{opCost.createdBy},updatedAt=#{opCost.updatedAt},updatedBy=#{opCost.updatedBy}
+        WHERE id=#{id}
+    </update>
+
+    <!--    //운영비용 삭제-->
+    <update id="deleteOperationCostById" parameterType="String">
+        UPDATE operation_cost
+        SET active_yn='N'
+        WHERE id = #{id}
+    </update>
+</mapper>

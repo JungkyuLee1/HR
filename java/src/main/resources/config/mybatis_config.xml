@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "//mybatis.org/DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+
+<configuration>
+    <typeAliases>
+        <typeAlias type="com.sellon.hr.dto.Code" alias="code"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.Employee" alias="employee"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.RoleCount" alias="roleCount"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.OperationCost" alias="operationCost"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.Expense" alias="expense"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.DevSchedule" alias="devSchedule"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.Memo" alias="memo"></typeAlias>
+        <typeAlias type="com.sellon.hr.dto.ServiceLink" alias="serviceLink"></typeAlias>
+    </typeAliases>
+</configuration>

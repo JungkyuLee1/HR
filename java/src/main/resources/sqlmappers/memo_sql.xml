@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sellon.hr.mapper.MemoMapper">
+    <resultMap id="MemoMap" type="memo">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="active_yn" property="activeYn"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="updated_by" property="updatedBy"/>
+    </resultMap>
+
+    <!--    //전체 조회(전체가 1건 임)-->
+    <select id="getMemo" resultMap="MemoMap" resultType="memo">
+        SELECT id,content,active_yn,created_at,created_by,updated_at,updated_by
+        FROM h_memo
+        WHERE active_yn='Y'
+    </select>
+
+    <!--    //건별 조회-->
+    <select id="getMemoById" resultMap="MemoMap" resultType="memo">
+        SELECT id,content,active_yn,created_at,created_by,updated_at,updated_by
+        FROM h_memo
+        WHERE id=#{id}
+        AND active_yn='Y'
+    </select>
+
+    <!--    //저장-->
+    <insert id="saveMemo" parameterType="memo">
+        INSERT INTO
+        h_memo(id,content,active_yn,created_at,created_by,updated_at,updated_by)
+        VALUES(#{id}, #{content}, #{activeYn},#{createdAt}, #{createdBy},#{updatedAt},#{updatedBy})
+    </insert>
+
+    <!--    //수정-->
+    <update id="updateMemo" parameterType="memo">
+        UPDATE h_memo
+        SET content=#{memo.content},active_yn=#{memo.activeYn},created_at=#{memo.createdAt},created_by=#{memo.createdBy},updated_at=#{memo.updatedAt},updated_by=#{memo.updatedBy}
+        WHERE id=#{id}
+    </update>
+</mapper>

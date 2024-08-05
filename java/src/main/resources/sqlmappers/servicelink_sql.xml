@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sellon.hr.mapper.ServiceLinkMapper">
+
+    <resultMap id="ServiceLinkMap" type="serviceLink">
+        <id column="id" property="id"/>
+        <result column="task" property="task"/>
+        <result column="seq" property="seq"/>
+        <result column="title" property="title"/>
+        <result column="url" property="url"/>
+        <result column="username" property="userName"/>
+        <result column="pwd" property="pwd"/>
+        <result column="content" property="content"/>
+        <result column="remark" property="remark"/>
+        <result column="active_yn" property="activeYn"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="updated_by" property="updatedBy"/>
+    </resultMap>
+
+    <select id="getAllServiceLink" resultMap="ServiceLinkMap" resultType="serviceLink">
+        SELECT id,task,seq,title,url,username,pwd,content,remark,active_yn,created_at,created_by,updated_at,updated_by
+        FROM h_servicelink
+        WHERE active_yn='Y'
+        ORDER BY seq
+    </select>
+</mapper>

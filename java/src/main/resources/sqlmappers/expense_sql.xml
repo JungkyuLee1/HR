@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sellon.hr.mapper.ExpenseMapper">
+    <resultMap id="CodeMap" type="code">
+        <result column="type" property="type"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="seq" property="seq"/>
+    </resultMap>
+
+    <resultMap id="ExpenseMap" type="expense">
+        <id column="id" property="id"/>
+        <result column="kind" property="kind"/>
+        <result column="in_outcome_date" property="inOutcomeDate"/>
+        <result column="item" property="item"/>
+        <result column="amount" property="amount"/>
+        <result column="unit" property="unit"/>
+        <result column="remark" property="remark"/>
+        <result column="active_yn" property="activeYn"/>
+        <result column="createdAt" property="createdAt"/>
+        <result column="createdBy" property="createdBy"/>
+        <result column="updatedAt" property="updatedAt"/>
+        <result column="updatedBy" property="updatedBy"/>
+    </resultMap>
+
+    <!--    //운영비용 관련 공통코드 조회-->
+    <select id="getUnitCode" resultMap="CodeMap" resultType="code">
+        SELECT type,code, name, seq
+        FROM c_code
+        WHERE use_yn='Y'
+        AND type = 'UNIT'
+        ORDER BY type,seq
+    </select>
+
+    <!--    //수입&지출별 전체 조회-->
+    <select id="getAllByKind" resultMap="ExpenseMap" resultType="expense">
+        SELECT id,kind,in_outcome_date,item,amount,unit,remark,active_yn,createdAt,createdBy,updatedAt,updatedBy
+        FROM income_outcome
+        WHERE kind=#{kind}
+        AND active_yn='Y'
+        ORDER BY in_outcome_date desc
+    </select>
+
+    <!--    //수입&지출 내역 건별 조회-->
+    <select id="getExpenseById" resultMap="ExpenseMap" resultType="expense">
+        SELECT id,kind,in_outcome_date,item,amount,unit,remark,active_yn,createdAt,createdBy,updatedAt,updatedBy
+        FROM income_outcome
+        WHERE id=#{id}
+        AND active_yn='Y'
+    </select>
+
+    <!--    //수입&지출 내역 저장-->
+    <insert id="saveExpense" parameterType="expense">
+        INSERT INTO
+        income_outcome(id,kind,in_outcome_date,item,amount,unit,remark,active_yn,createdAt,createdBy,updatedAt,updatedBy)
+        VALUES(#{id}, #{kind}, #{inOutcomeDate},#{item},#{amount},#{unit},#{remark},#{activeYn},#{createdAt},
+        #{createdBy},#{updatedAt},#{updatedBy})
+    </insert>
+
+    <!--    //수입&지출 내역 수정-->
+    <update id="updateExpense" parameterType="expense">
+        UPDATE income_outcome
+        SET kind=#{exp.kind},in_outcome_date=#{exp.inOutcomeDate},item=#{exp.item},
+        amount=#{exp.amount},unit=#{exp.unit},remark=#{exp.remark},active_yn=#{exp.activeYn},createdAt=#{exp.createdAt},
+        createdBy=#{exp.createdBy},updatedAt=#{exp.updatedAt},updatedBy=#{exp.updatedBy}
+        WHERE id=#{id}
+    </update>
+
+
+
+    <!--    //수입&지출 내역 건별 삭제-->
+    <update id="deleteExpenseById" parameterType="String">
+        UPDATE income_outcome
+        SET active_yn='N'
+        WHERE id = #{id}
+    </update>
+</mapper>

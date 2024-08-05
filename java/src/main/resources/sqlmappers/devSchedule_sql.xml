@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sellon.hr.mapper.DevScheduleMapper">
+    <resultMap id="CodeMap" type="code">
+        <result column="type" property="type"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="seq" property="seq"/>
+    </resultMap>
+
+    <resultMap id="DevScheduleMap" type="devSchedule">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="detail" property="detail"/>
+        <result column="nation" property="nation"/>
+        <result column="complete_status" property="completeStatus"/>
+        <result column="dev_period_kind" property="devPeriodKind"/>
+        <result column="active_yn" property="activeYn"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="updated_by" property="updatedBy"/>
+    </resultMap>
+
+    <!--    //운영비용 관련 공통코드 조회-->
+    <select id="getDevCodes" resultMap="CodeMap" resultType="code">
+        SELECT type,code, name, seq
+        FROM c_code
+        WHERE use_yn='Y'
+        AND type in ('NATION','DEVPERIOD','PROGRESS')
+        ORDER BY type,seq
+    </select>
+
+    <!--    //title로 전체 조회(%%)-->
+    <select id="getAllByTitleAndStatus" resultMap="DevScheduleMap" resultType="devSchedule">
+        SELECT
+        id,title,detail,nation,complete_status,dev_period_kind,active_yn,created_at,created_by,updated_at,updated_by
+        FROM h_dev_schedule
+        WHERE title LIKE '%${title}%'
+        AND complete_status LIKE '%${status}%'
+        AND active_yn='Y'
+        ORDER BY id desc
+    </select>
+
+    <!--    //건별 조회-->
+    <select id="getDevScheduleById" resultMap="DevScheduleMap" resultType="devSchedule">
+        SELECT
+        id,title,detail,nation,complete_status,dev_period_kind,active_yn,created_at,created_by,updated_at,updated_by
+        FROM h_dev_schedule
+        WHERE id=#{id}
+        AND active_yn='Y'
+    </select>
+
+    <!--    //저장-->
+    <insert id="saveDevSchedule" parameterType="devSchedule">
+        INSERT INTO
+        h_dev_schedule(id,title,detail,nation,complete_status,dev_period_kind,active_yn,created_at,created_by,updated_at,updated_by)
+        VALUES(#{id}, #{title}, #{detail},#{nation},#{completeStatus},#{devPeriodKind},#{activeYn},#{createdAt},
+        #{createdBy},#{updatedAt},#{updatedBy})
+    </insert>
+
+    <!--    //수정-->
+    <update id="updateDevSchedule" parameterType="devSchedule">
+        UPDATE h_dev_schedule
+        SET title=#{devSch.title},detail=#{devSch.detail},nation=#{devSch.nation},
+        complete_status=#{devSch.completeStatus},dev_period_kind=#{devSch.devPeriodKind},
+        active_yn=#{devSch.activeYn},created_at=#{devSch.createdAt},created_by=#{devSch.createdBy},updated_at=#{devSch.updatedAt},updated_by=#{devSch.updatedBy}
+        WHERE id=#{id}
+    </update>
+
+
+    <!--    //삭제-->
+    <update id="deleteDevScheduleById" parameterType="String">
+        UPDATE h_dev_schedule
+        SET active_yn='N'
+        WHERE id = #{id}
+    </update>
+</mapper>
